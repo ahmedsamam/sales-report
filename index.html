@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Sales Report → WhatsApp</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.1.1/tesseract.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3248;
+    --accent: #4f8ef7;
+    --green: #34c77b;
+    --green-lt: rgba(52,199,123,.12);
+    --orange: #f7944f;
+    --red: #f75f5f;
+    --red-lt: rgba(247,95,95,.1);
+    --text: #eef0f8;
+    --text2: #8b90a8;
+    --text3: #4e5370;
+    --radius: 14px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    max-width: 430px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+  }
+
+  .header { padding: 52px 20px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  .app-title { font-size: 1.3rem; font-weight: 600; letter-spacing: -0.02em; }
+  .app-title span { color: var(--accent); }
+  .status-badge { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; background: var(--green-lt); color: var(--green); }
+  .header-sub { font-size: 0.8rem; color: var(--text2); }
+
+  .by-samam {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .by-samam-text {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, #4f8ef7, #34c77b, #4f8ef7);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
+  }
+
+  .by-samam-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .by-samam-dot:last-child {
+    animation-delay: 0.5s;
+    background: var(--green);
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; }
+  }
+
+  .date-row { display: flex; align-items: center; gap: 10px; padding: 14px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .date-label { font-size: 0.75rem; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+  .date-input { flex: 1; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 10px; padding: 8px 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; outline: none; }
+  .date-input:focus { border-color: var(--accent); }
+
+  .reports-wrap { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .report-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .report-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  .report-title { font-size: 0.85rem; font-weight: 600; }
+  .report-badge { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 8px; background: var(--surface2); color: var(--text3); }
+  .report-badge.ready { background: var(--green-lt); color: var(--green); }
+
+  .photo-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; }
+  .slot { border: 1.5px dashed var(--border); border-radius: 10px; padding: 12px 8px; text-align: center; cursor: pointer; transition: all .2s; position: relative; overflow: hidden; min-height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .slot:active { transform: scale(0.97); }
+  .slot.uploaded { border-color: var(--green); border-style: solid; background: var(--green-lt); }
+  .slot-thumb { width: 100%; height: 65px; object-fit: cover; border-radius: 6px; margin-bottom: 5px; display: none; }
+  .slot.uploaded .slot-thumb { display: block; }
+  .slot.uploaded .slot-icon { display: none; }
+  .slot-icon { font-size: 1.2rem; margin-bottom: 4px; }
+  .slot-label { font-size: 0.68rem; font-weight: 600; color: var(--text2); line-height: 1.3; }
+  .slot.uploaded .slot-label { color: var(--green); }
+  .slot-status { font-size: 0.6rem; color: var(--text3); margin-top: 2px; }
+  .slot.uploaded .slot-status { color: var(--green); opacity: 0.7; }
+  .slot input[type=file] { display: none; }
+  .remove-btn { position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; border-radius: 50%; background: var(--red); color: white; border: none; font-size: 0.65rem; cursor: pointer; display: none; align-items: center; justify-content: center; }
+  .slot.uploaded .remove-btn { display: flex; }
+
+  .analyze-btn { margin: 0 16px 16px; width: calc(100% - 32px); padding: 15px; background: var(--accent); color: white; border: none; border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .analyze-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .analyze-btn:not(:disabled):active { transform: scale(0.98); }
+
+  .loading { display: none; padding: 30px 20px; text-align: center; }
+  .loading.show { display: block; }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 0.85rem; color: var(--text2); }
+  .loading-step { font-size: 0.75rem; color: var(--text3); margin-top: 6px; font-style: italic; }
+
+  .progress-bar-wrap { height: 4px; background: var(--border); border-radius: 2px; margin: 12px 20px 0; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width .4s ease; width: 0%; }
+
+  .result-section { display: none; padding: 16px; }
+  .result-section.show { display: block; }
+  .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .result-title { font-size: 0.8rem; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 0.08em; }
+  .copy-btn { padding: 8px 16px; background: var(--green-lt); color: var(--green); border: 1px solid rgba(52,199,123,.3); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all .2s; }
+  .copy-btn:active { transform: scale(0.96); }
+  .copy-btn.copied { background: var(--green); color: white; }
+  .message-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; font-family: 'DM Mono', monospace; font-size: 0.78rem; line-height: 1.7; color: var(--text); white-space: pre-wrap; word-break: break-word; max-height: 500px; overflow-y: auto; }
+  .message-box::-webkit-scrollbar { width: 4px; }
+  .message-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .reset-btn { width: 100%; padding: 13px; background: transparent; color: var(--text2); border: 1px solid var(--border); border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; margin-top: 10px; transition: all .2s; }
+  .reset-btn:active { background: var(--surface2); }
+
+  .error-box { display: none; margin: 0 16px 16px; padding: 14px 16px; background: var(--red-lt); border: 1px solid rgba(247,95,95,.3); border-radius: var(--radius); font-size: 0.82rem; color: var(--red); line-height: 1.5; white-space: pre-wrap; }
+  .error-box.show { display: block; }
+
+  .tips { margin: 0 16px 16px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+  .tips-title { font-size: 0.72rem; font-weight: 600; color: var(--orange); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .tip { font-size: 0.78rem; color: var(--text2); padding: 4px 0 4px 14px; position: relative; line-height: 1.4; }
+  .tip::before { content: '·'; position: absolute; left: 4px; color: var(--text3); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="app-title">Report<span>→</span>WA</div>
+    <div class="status-badge">No API Needed</div>
+  </div>
+  <div class="header-sub">Oracle Micros → WhatsApp in seconds</div>
+  <div class="by-samam">
+    <span class="by-samam-dot"></span>
+    <span class="by-samam-text">by Samam</span>
+    <span class="by-samam-dot"></span>
+  </div>
+</div>
+
+<div class="date-row">
+  <div class="date-label">Date</div>
+  <input class="date-input" type="text" id="report-date" placeholder="e.g. 21/04/2026" />
+</div>
+
+<div class="reports-wrap">
+
+  <!-- LUNCH -->
+  <div class="report-card">
+    <div class="report-header">
+      <div class="report-title">☀️ Eau Bar — Lunch</div>
+      <div class="report-badge" id="badge-lunch">No photos</div>
+    </div>
+    <div class="photo-slots">
+      <div class="slot" id="slot-lunch-1" onclick="triggerUpload('lunch',1)">
+        <input type="file" id="file-lunch-1" accept="image/*" onchange="handleUpload('lunch',1,this)">
+        <img class="slot-thumb" id="thumb-lunch-1" />
+        <button class="remove-btn" onclick="removePhoto(event,'lunch',1)">✕</button>
+        <div class="slot-icon">📷</div>
+        <div class="slot-label">Top Half</div>
+        <div class="slot-status">Tap to upload</div>
+      </div>
+      <div class="slot" id="slot-lunch-2" onclick="triggerUpload('lunch',2)">
+        <input type="file" id="file-lunch-2" accept="image/*" onchange="handleUpload('lunch',2,this)">
+        <img class="slot-thumb" id="thumb-lunch-2" />
+        <button class="remove-btn" onclick="removePhoto(event,'lunch',2)">✕</button>
+        <div class="slot-icon">📷</div>
+        <div class="slot-label">Bottom Half</div>
+        <div class="slot-status">Tap to upload</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DINNER -->
+  <div class="report-card">
+    <div class="report-header">
+      <div class="report-title">🌙 Eau Bar — Dinner</div>
+      <div class="report-badge" id="badge-dinner">No photos</div>
+    </div>
+    <div class="photo-slots">
+      <div class="slot" id="slot-dinner-1" onclick="triggerUpload('dinner',1)">
+        <input type="file" id="file-dinner-1" accept="image/*" onchange="handleUpload('dinner',1,this)">
+        <img class="slot-thumb" id="thumb-dinner-1" />
+        <button class="remove-btn" onclick="removePhoto(event,'dinner',1)">✕</button>
+        <div class="slot-icon">📷</div>
+        <div class="slot-label">Top Half</div>
+        <div class="slot-status">Tap to upload</div>
+      </div>
+      <div class="slot" id="slot-dinner-2" onclick="triggerUpload('dinner',2)">
+        <input type="file" id="file-dinner-2" accept="image/*" onchange="handleUpload('dinner',2,this)">
+        <img class="slot-thumb" id="thumb-dinner-2" />
+        <button class="remove-btn" onclick="removePhoto(event,'dinner',2)">✕</button>
+        <div class="slot-icon">📷</div>
+        <div class="slot-label">Bottom Half</div>
+        <div class="slot-status">Tap to upload</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IWAU -->
+  <div class="report-card">
+    <div class="report-header">
+      <div class="report-title">🍽️ Iwau Chef Table</div>
+      <div class="report-badge" id="badge-iwau">No photos</div>
+    </div>
+    <div class="photo-slots">
+      <div class="slot" id="slot-iwau-1" onclick="triggerUpload('iwau',1)">
+        <input type="file" id="file-iwau-1" accept="image/*" onchange="handleUpload('iwau',1,this)">
+        <img class="slot-thumb" id="thumb-iwau-1" />
+        <button class="remove-btn" onclick="removePhoto(event,'iwau',1)">✕</button>
+        <div class="slot-icon">📷</div>
+        <div class="slot-label">Top Half</div>
+        <div class="slot-status">Tap to upload</div>
+      </div>
+      <div class="slot" id="slot-iwau-2" onclick="triggerUpload('iwau',2)">
+        <input type="file" id="file-iwau-2" accept="image/*" onchange="handleUpload('iwau',2,this)">
+        <img class="slot-thumb" id="thumb-iwau-2" />
+        <button class="remove-btn" onclick="removePhoto(event,'iwau',2)">✕</button>
+        <div class="slot-icon">📷</div>
+        <div class="slot-label">Bottom Half</div>
+        <div class="slot-status">Tap to upload</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<button class="analyze-btn" id="analyze-btn" onclick="analyzeReports()" disabled>
+  🔍 Generate WhatsApp Message
+</button>
+
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Reading your reports…</div>
+  <div class="loading-step" id="loading-step">Please wait…</div>
+</div>
+<div class="progress-bar-wrap" id="progress-wrap" style="display:none;">
+  <div class="progress-bar-fill" id="progress-fill"></div>
+</div>
+
+<div class="error-box" id="error-box"></div>
+
+<div class="result-section" id="result-section">
+  <div class="result-header">
+    <div class="result-title">✅ Message Ready</div>
+    <button class="copy-btn" id="copy-btn" onclick="copyMessage()">📋 Copy</button>
+  </div>
+  <div class="message-box" id="message-box"></div>
+  <button class="reset-btn" onclick="resetAll()">↺ Start Over</button>
+  <button class="reset-btn" onclick="toggleDebug()" id="debug-btn" style="margin-top:8px;color:var(--text3);font-size:0.75rem;">🔍 Show Raw OCR Text</button>
+  <div id="debug-box" style="display:none;margin-top:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;font-family:DM Mono,monospace;font-size:0.65rem;color:var(--text2);white-space:pre-wrap;max-height:200px;overflow-y:auto;line-height:1.5;"></div>
+</div>
+
+<div class="tips" id="tips-box">
+  <div class="tips-title">📸 Photo Tips</div>
+  <div class="tip">Lay the report flat — no shadows or folds</div>
+  <div class="tip">Top half: header down to Order Type section</div>
+  <div class="tip">Bottom half: Food/Bev items to the end</div>
+  <div class="tip">Good lighting and sharp focus — very important!</div>
+  <div class="tip">Keep text straight, not tilted</div>
+  <div class="tip">You can generate with just 1 section uploaded</div>
+</div>
+
+<script>
+  const photos = { lunch: {}, dinner: {}, iwau: {} };
+
+  const today = new Date();
+  const dd = String(today.getDate()).padStart(2,'0');
+  const mm = String(today.getMonth()+1).padStart(2,'0');
+  const yyyy = today.getFullYear();
+  document.getElementById('report-date').value = `${dd}/${mm}/${yyyy}`;
+
+  function triggerUpload(s, n) { document.getElementById(`file-${s}-${n}`).click(); }
+
+  function handleUpload(s, n, input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      photos[s][n] = e.target.result;
+      document.getElementById(`thumb-${s}-${n}`).src = e.target.result;
+      const slot = document.getElementById(`slot-${s}-${n}`);
+      slot.classList.add('uploaded');
+      slot.querySelector('.slot-status').textContent = '✓ Ready';
+      updateBadge(s);
+      checkReady();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removePhoto(e, s, n) {
+    e.stopPropagation();
+    delete photos[s][n];
+    const slot = document.getElementById(`slot-${s}-${n}`);
+    slot.classList.remove('uploaded');
+    slot.querySelector('.slot-status').textContent = 'Tap to upload';
+    document.getElementById(`thumb-${s}-${n}`).src = '';
+    document.getElementById(`file-${s}-${n}`).value = '';
+    updateBadge(s);
+    checkReady();
+  }
+
+  function updateBadge(s) {
+    const count = Object.keys(photos[s]).length;
+    const badge = document.getElementById(`badge-${s}`);
+    if (count === 0) { badge.textContent = 'No photos'; badge.className = 'report-badge'; }
+    else if (count === 1) { badge.textContent = '1 photo ✓'; badge.className = 'report-badge ready'; }
+    else { badge.textContent = 'Top ✅ Bottom ✅'; badge.className = 'report-badge ready'; }
+  }
+
+  function checkReady() {
+    const hasAny = Object.values(photos).some(s => Object.keys(s).length > 0);
+    document.getElementById('analyze-btn').disabled = !hasAny;
+  }
+
+  function setProgress(p) { document.getElementById('progress-fill').style.width = p + '%'; }
+
+  // ── PREPROCESS IMAGE for better OCR ──
+  async function preprocessImage(dataUrl) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        // Scale up for better OCR
+        const scale = 2;
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d');
+
+        // Draw scaled image
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // Apply contrast and brightness for thermal receipt
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          // Convert to grayscale
+          const avg = (data[i] + data[i+1] + data[i+2]) / 3;
+          // Increase contrast - make dark darker, light lighter
+          const contrast = 1.5;
+          const factor = (259 * (contrast * 255 + 255)) / (255 * (259 - contrast * 255));
+          const val = factor * (avg - 128) + 128;
+          const clamped = Math.max(0, Math.min(255, val));
+          // Threshold - make it black and white
+          const bw = clamped > 140 ? 255 : 0;
+          data[i] = data[i+1] = data[i+2] = bw;
+        }
+        ctx.putImageData(imageData, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.src = dataUrl;
+    });
+  }
+
+  // ── OCR a single image ──
+  async function ocrImage(dataUrl, progressCallback) {
+    const processed = await preprocessImage(dataUrl);
+    const result = await Tesseract.recognize(processed, 'eng', {
+      logger: m => {
+        if (m.status === 'recognizing text' && progressCallback) {
+          progressCallback(Math.round(m.progress * 100));
+        }
+      },
+      tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,()$= #/-:',
+    });
+    return result.data.text;
+  }
+
+  // ── PARSE OCR TEXT to extract figures ──
+  function parseReport(text) {
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+    // Extract the LAST dollar amount on a line (most reliable for totals)
+    // Handles: $1,234.56 | ($1,234.56) | £1,234.56 | 1,234.56
+    function getLastAmount(line) {
+      // Normalize: replace £ § with $ , and remove currency symbols
+      const normalized = line.replace(/[£§€]/g, '$');
+      // Remove parentheses around negative numbers first
+      const cleaned = normalized.replace(/\([6$]?([\d,]+\.\d{2})\)/g, '$1');
+      // Find all dollar amounts — $ or 6 (misread $) followed by digits
+      const matches = [...cleaned.matchAll(/[6$]?([\d,]+\.\d{2})/g)];
+      if (matches.length > 0) {
+        const last = matches[matches.length - 1][1];
+        return Math.floor(parseFloat(last.replace(/,/g, '')));
+      }
+      return 0;
+    }
+
+    // Find a line by keyword and return its last dollar amount
+    function findAmount(keywords) {
+      for (const line of lines) {
+        const upper = line.toUpperCase();
+        if (keywords.some(kw => upper.includes(kw.toUpperCase()))) {
+          const amt = getLastAmount(line);
+          if (amt > 0) return amt;
+        }
+      }
+      return 0;
+    }
+
+    // Find count — the FIRST standalone number on the line (not part of dollar amount)
+    function findCount(keywords) {
+      for (const line of lines) {
+        const upper = line.toUpperCase();
+        if (keywords.some(kw => upper.includes(kw.toUpperCase()))) {
+          // Remove dollar amounts first to avoid confusion
+          const stripped = line.replace(/\$[\d,]+\.\d{2}/g, '').replace(/[\$,\.]/g, '');
+          const nums = stripped.match(/\b(\d{1,3})\b/g); // small numbers = counts
+          if (nums && nums.length > 0) return parseInt(nums[0]);
+        }
+      }
+      return 0;
+    }
+
+    // Avg check — dollar amount on #CHKS $AV line
+    function findAvgCheck() {
+      for (const line of lines) {
+        const upper = line.toUpperCase();
+        if ((upper.includes('CHKS') || upper.includes('CHK5')) && upper.includes('AV')) {
+          return getLastAmount(line);
+        }
+      }
+      return 0;
+    }
+
+    // For entertainment — handle ($399.00) or (6399.00) where $ misread as 6
+    function findEntertainment() {
+      for (const line of lines) {
+        const upper = line.toUpperCase();
+        if (upper.includes('=ENTERTAINMENT') || upper.includes('= ENTERTAINMENT') || 
+            upper.includes('=ENTERTAIN')) {
+          // Match (6399.00) or ($399.00) or (399.00) — $ often misread as 6
+          const match = line.match(/\([6$]?([\d,]+\.\d{2})\)/);
+          if (match) return Math.floor(parseFloat(match[1].replace(/,/g, '')));
+          return getLastAmount(line);
+        }
+      }
+      return 0;
+    }
+
+    const net_sales  = findAmount(['Net Sales']);
+    const checks     = findCount(['#CHKS', 'CHKS,', '#CHK5', 'CHK5,']);
+    const covers     = findCount(['#GSTS', 'GSTS,', '#G5TS', 'G5TS,']);
+    const avg_check  = findAvgCheck();
+    const food       = findAmount(['=FOOD', '= FOOD']);
+    const na_bev     = findAmount(['=NA BEVERAGE', 'NA BEVERAGE', '=NABEVERAGE']);
+    const liquor     = findAmount(['=LIQUOR', '= LIQUOR']);
+    const wine       = findAmount(['=WINE', '= WINE', '=HINE', '=UINE', '=VJNE', '=VV1NE']);
+    const beer       = findAmount(['=BEER', '= BEER']);
+    const tobacco    = findAmount(['=TOBACCO', '= TOBACCO']);
+    const ent        = findEntertainment();
+    const oc         = findAmount(['Officer Check', 'OFFICER CHECK']);
+    const patina     = findAmount(['Room Charge Pr', 'ROOM CHARGE PR']);
+
+    return {
+      checks,
+      covers,
+      avg_check,
+      ent_spent:    ent,
+      oc_spent:     oc,
+      patina_spent: patina,
+      food_rev:     food + na_bev,
+      bev_rev:      liquor + wine + beer,
+      tobacco_rev:  tobacco,
+      net_sales
+    };
+  }
+
+  // ── OCR multiple images and merge results ──
+  async function extractFromImages(imageList, reportName, progressCallback) {
+    let combinedText = '';
+
+    for (let i = 0; i < imageList.length; i++) {
+      progressCallback(`Reading ${reportName} photo ${i+1}/${imageList.length}…`, 0);
+      const text = await ocrImage(imageList[i], pct => {
+        progressCallback(`Reading ${reportName} photo ${i+1}/${imageList.length}… ${pct}%`, pct);
+      });
+      combinedText += '\n' + text;
+    }
+
+    rawOCRText += '\n--- ' + reportName + ' ---\n' + combinedText;
+    return parseReport(combinedText);
+  }
+
+  const fmt = v => String(Math.floor(Number(v) || 0));
+
+  function buildSection(title, d, entLabel) {
+    return `${title}
+
+Checks: ${fmt(d.checks)}
+Covers: ${fmt(d.covers)}
+${entLabel}: 0
+Ent Spent: ${fmt(d.ent_spent)}
+Oc Covers: 0
+Oc Spent: ${fmt(d.oc_spent)}
+Patina Covers: 0
+Patina Spent: ${fmt(d.patina_spent)}
+Avg Check: ${fmt(d.avg_check)}
+Food Rev: ${fmt(d.food_rev)}
+Bev Rev: ${fmt(d.bev_rev)}
+Tobacco Rev: ${fmt(d.tobacco_rev)}
+Net Sales: ${fmt(d.net_sales)}`;
+  }
+
+  async function analyzeReports() {
+    const date = document.getElementById('report-date').value.trim() || `${dd}/${mm}/${yyyy}`;
+    const names = { lunch: 'Eau Bar Lunch', dinner: 'Eau Bar Dinner', iwau: 'Iwau Chef Table' };
+    const toProcess = ['lunch','dinner','iwau'].filter(s => Object.keys(photos[s]).length > 0);
+
+    document.getElementById('tips-box').style.display = 'none';
+    document.getElementById('error-box').classList.remove('show');
+    document.getElementById('result-section').classList.remove('show');
+    document.getElementById('loading').classList.add('show');
+    document.getElementById('progress-wrap').style.display = 'block';
+    document.getElementById('analyze-btn').disabled = true;
+    setProgress(5);
+
+    const stepEl = document.getElementById('loading-step');
+    const loadText = document.getElementById('loading-text');
+    loadText.textContent = 'Reading your reports… (this may take 30-60 seconds)';
+    const results = {};
+
+    try {
+      for (let i = 0; i < toProcess.length; i++) {
+        const s = toProcess[i];
+        const baseProgress = 10 + Math.round((i / toProcess.length) * 80);
+
+        results[s] = await extractFromImages(
+          Object.values(photos[s]),
+          names[s],
+          (msg, pct) => {
+            stepEl.textContent = msg;
+            setProgress(baseProgress + Math.round(pct * 0.8 / toProcess.length));
+          }
+        );
+      }
+
+      setProgress(95);
+      stepEl.textContent = 'Building message…';
+
+      const parts = [`Date ${date}`];
+      if (results.lunch)  parts.push(buildSection('Eau Bar - Lunch',  results.lunch,  'Ent Covers'));
+      if (results.dinner) parts.push(buildSection('Eau Bar - Dinner', results.dinner, 'Ent covers'));
+      if (results.iwau)   parts.push(buildSection('Iwau Chef Table',  results.iwau,   'Ent cover'));
+      parts.push('Thank you!');
+
+      setProgress(100);
+      setTimeout(() => {
+        document.getElementById('loading').classList.remove('show');
+        document.getElementById('progress-wrap').style.display = 'none';
+        document.getElementById('message-box').textContent = parts.join('\n\n');
+        document.getElementById('result-section').classList.add('show');
+      }, 300);
+
+    } catch(err) {
+      document.getElementById('loading').classList.remove('show');
+      document.getElementById('progress-wrap').style.display = 'none';
+      document.getElementById('error-box').textContent = '⚠️ ' + err.message;
+      document.getElementById('error-box').classList.add('show');
+      document.getElementById('analyze-btn').disabled = false;
+      document.getElementById('tips-box').style.display = 'block';
+      setProgress(0);
+    }
+  }
+
+  let rawOCRText = '';
+
+  function toggleDebug() {
+    const box = document.getElementById('debug-box');
+    const btn = document.getElementById('debug-btn');
+    if (box.style.display === 'none') {
+      box.style.display = 'block';
+      box.textContent = rawOCRText || 'No OCR text yet';
+      btn.textContent = '🔍 Hide Raw OCR Text';
+    } else {
+      box.style.display = 'none';
+      btn.textContent = '🔍 Show Raw OCR Text';
+    }
+  }
+
+  function copyMessage() {
+    navigator.clipboard.writeText(document.getElementById('message-box').textContent).then(() => {
+      const btn = document.getElementById('copy-btn');
+      btn.textContent = '✓ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = '📋 Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  function resetAll() {
+    ['lunch','dinner','iwau'].forEach(s => {
+      photos[s] = {};
+      [1,2].forEach(n => {
+        const slot = document.getElementById(`slot-${s}-${n}`);
+        slot.classList.remove('uploaded');
+        slot.querySelector('.slot-status').textContent = 'Tap to upload';
+        document.getElementById(`thumb-${s}-${n}`).src = '';
+        document.getElementById(`file-${s}-${n}`).value = '';
+      });
+      updateBadge(s);
+    });
+    document.getElementById('result-section').classList.remove('show');
+    document.getElementById('error-box').classList.remove('show');
+    document.getElementById('loading').classList.remove('show');
+    document.getElementById('progress-wrap').style.display = 'none';
+    document.getElementById('tips-box').style.display = 'block';
+    document.getElementById('analyze-btn').disabled = true;
+    setProgress(0);
+  }
+</script>
+</body>
+</html>
