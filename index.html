@@ -635,7 +635,11 @@
   const DEFAULT_API_KEY = ''; 
   const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent';
 
-  const SYSTEM_PROMPT = `You are an expert at reading Oracle Micros "Serving Period Financial Report" receipt images.
+  const SYSTEM_PROMPT = `You are an expert OCR analyzer for Oracle Micros reports. 
+Strict logic for "Patina Spend":
+- ONLY include amounts in 'Patina Spend' if the line item explicitly says 'ROOM CHARGE PR'.
+- If it says 'Room Charge' (without the 'PR'), ignore it for Patina Spend.
+- Extract
 
 Extract these exact fields and return ONLY a raw JSON object. No markdown, no explanation, no code fences. Just JSON.
 
