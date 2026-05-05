@@ -5,85 +5,105 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Report→WA by Samam</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:       #0f1117;
-    --surface:  #1a1d27;
-    --surface2: #22263a;
-    --border:   #2e3248;
-    --accent:   #4f8ef7;
-    --accent-lt:rgba(79,142,247,.12);
-    --green:    #34c77b;
-    --green-lt: rgba(52,199,123,.12);
-    --orange:   #f7944f;
-    --red:      #f75f5f;
-    --red-lt:   rgba(247,95,95,.1);
-    --text:     #eef0f8;
-    --text2:    #8b90a8;
-    --text3:    #4e5370;
-    --radius:   14px;
+    --bg: #f5f0e8;
+    --bg2: #ede8de;
+    --surface: #ffffff;
+    --border: #d4cfc4;
+    --border2: #c4bfb4;
+    --accent: #e85d26;
+    --green: #2a7a4f;
+    --green-lt: #eef7f2;
+    --green-bd: #b8ddc9;
+    --red: #c0392b;
+    --red-lt: #fdf0ef;
+    --red-bd: #f0c4c0;
+    --text: #1a1814;
+    --text2: #6b6560;
+    --text3: #a09890;
+    --orange-lt: #fff4ee;
+    --orange-bd: #f5d0b8;
+    --radius: 16px;
+    --radius-sm: 10px;
   }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-font-family: ‘DM Sans’, sans-serif;
+font-family: ‘Syne’, sans-serif;
 background: var(–bg);
 color: var(–text);
 min-height: 100vh;
 max-width: 430px;
 margin: 0 auto;
-padding-bottom: 40px;
+padding-bottom: 60px;
 }
 
-/* ── HEADER ── */
 .header {
-padding: 52px 20px 16px;
-background: var(–surface);
-border-bottom: 1px solid var(–border);
+padding: 56px 24px 24px;
+background: var(–text);
+position: relative;
+overflow: hidden;
 }
 
-.header-top {
-display: flex;
-align-items: center;
-justify-content: space-between;
-margin-bottom: 4px;
+.header::before {
+content: ‘RWA’;
+position: absolute;
+right: -10px;
+top: 50%;
+transform: translateY(-50%);
+font-size: 7rem;
+font-weight: 800;
+color: rgba(255,255,255,0.04);
+letter-spacing: -0.05em;
+pointer-events: none;
+line-height: 1;
+}
+
+.header-tag {
+display: inline-block;
+font-size: 0.62rem;
+font-weight: 700;
+letter-spacing: 0.18em;
+text-transform: uppercase;
+color: var(–accent);
+background: rgba(232,93,38,0.15);
+padding: 4px 10px;
+border-radius: 20px;
+margin-bottom: 12px;
+border: 1px solid rgba(232,93,38,0.3);
 }
 
 .app-title {
-font-size: 1.3rem;
-font-weight: 600;
-letter-spacing: -0.02em;
+font-size: 2rem;
+font-weight: 800;
+color: #ffffff;
+letter-spacing: -0.04em;
+line-height: 1.05;
+margin-bottom: 6px;
 }
 
 .app-title span { color: var(–accent); }
 
-.status-badge {
-font-size: 0.68rem;
-font-weight: 600;
-letter-spacing: 0.06em;
-text-transform: uppercase;
-padding: 4px 10px;
-border-radius: 20px;
-background: var(–green-lt);
-color: var(–green);
+.header-sub {
+font-size: 0.78rem;
+color: rgba(255,255,255,0.4);
+font-weight: 400;
+margin-bottom: 20px;
 }
 
-.header-sub { font-size: 0.8rem; color: var(–text2); margin-bottom: 10px; }
+.by-samam { display: flex; align-items: center; gap: 8px; }
 
-.by-samam {
-display: flex;
-align-items: center;
-gap: 8px;
-}
+.by-samam-line { height: 1px; width: 24px; background: var(–accent); }
 
 .by-samam-text {
-font-size: 0.72rem;
-font-weight: 600;
-letter-spacing: 0.2em;
+font-size: 0.65rem;
+font-weight: 700;
+letter-spacing: 0.22em;
 text-transform: uppercase;
-background: linear-gradient(90deg, #4f8ef7, #34c77b, #4f8ef7);
+background: linear-gradient(90deg, var(–accent), #f5a070, var(–accent));
 background-size: 200% auto;
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
@@ -91,548 +111,452 @@ background-clip: text;
 animation: shimmer 3s linear infinite;
 }
 
-.by-samam-dot {
-width: 4px;
-height: 4px;
-border-radius: 50%;
-background: var(–accent);
-animation: pulse 2s ease-in-out infinite;
-}
-
-.by-samam-dot:last-child {
-animation-delay: 0.5s;
-background: var(–green);
-}
-
 @keyframes shimmer {
 0% { background-position: 0% center; }
 100% { background-position: 200% center; }
 }
 
-@keyframes pulse {
-0%, 100% { transform: scale(1); opacity: 1; }
-50% { transform: scale(1.5); opacity: 0.5; }
-}
-
-/* ── API KEY SECTION ── */
-.api-section {
-padding: 14px 16px;
+.section {
+margin: 16px 16px 0;
 background: var(–surface);
-border-bottom: 1px solid var(–border);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+overflow: hidden;
 }
 
-.api-row {
+.section-header {
 display: flex;
 align-items: center;
-gap: 8px;
+justify-content: space-between;
+padding: 12px 16px;
+border-bottom: 1px solid var(–border);
+background: var(–bg2);
 }
+
+.section-label {
+font-size: 0.68rem;
+font-weight: 700;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+color: var(–text2);
+}
+
+.section-body { padding: 14px 16px; }
+
+.gemini-badge {
+display: inline-flex;
+align-items: center;
+gap: 5px;
+font-size: 0.6rem;
+font-weight: 700;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+padding: 3px 9px;
+border-radius: 20px;
+background: linear-gradient(135deg, rgba(66,133,244,0.1), rgba(52,168,83,0.1));
+color: #4285f4;
+border: 1px solid rgba(66,133,244,0.2);
+}
+
+.gemini-dot {
+width: 6px; height: 6px;
+border-radius: 50%;
+background: linear-gradient(135deg, #4285f4, #34a853);
+animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+0%, 100% { transform: scale(1); opacity: 1; }
+50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+.api-row { display: flex; align-items: center; gap: 8px; }
 
 .api-input {
 flex: 1;
-background: var(–surface2);
+background: var(–bg);
 border: 1.5px solid var(–border);
-border-radius: 10px;
-padding: 8px 12px;
+border-radius: var(–radius-sm);
+padding: 10px 12px;
 color: var(–text);
-font-family: ‘DM Mono’, monospace;
-font-size: 0.72rem;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 0.7rem;
 outline: none;
 transition: border-color .2s;
 }
 
 .api-input:focus { border-color: var(–accent); }
-.api-input.valid { border-color: var(–green); }
-.api-input.invalid { border-color: var(–red); }
+.api-input.valid { border-color: var(–green); background: var(–green-lt); }
+.api-input.invalid { border-color: var(–red); background: var(–red-lt); }
 
-.api-test-btn {
-padding: 8px 14px;
-background: var(–accent-lt);
-color: var(–accent);
-border: 1px solid rgba(79,142,247,.3);
-border-radius: 10px;
-font-family: ‘DM Sans’, sans-serif;
-font-size: 0.75rem;
-font-weight: 600;
+.test-btn {
+padding: 10px 14px;
+background: var(–text);
+color: #fff;
+border: none;
+border-radius: var(–radius-sm);
+font-family: ‘Syne’, sans-serif;
+font-size: 0.72rem;
+font-weight: 700;
 cursor: pointer;
 white-space: nowrap;
 transition: all .2s;
 }
 
-.api-test-btn:active { transform: scale(0.96); }
+.test-btn:active { transform: scale(0.95); }
 
-.api-status {
-font-size: 0.7rem;
-margin-top: 6px;
-padding: 0 2px;
-min-height: 16px;
-}
-
-.api-status.ok  { color: var(–green); }
+.api-status { font-size: 0.7rem; margin-top: 8px; min-height: 16px; font-weight: 500; }
+.api-status.ok { color: var(–green); }
 .api-status.err { color: var(–red); }
 .api-status.checking { color: var(–text3); font-style: italic; }
 
-/* ── DATE ── */
-.date-row {
-display: flex;
-align-items: center;
-gap: 10px;
-padding: 14px 20px;
-background: var(–surface);
-border-bottom: 1px solid var(–border);
-}
-
-.date-label {
-font-size: 0.75rem;
-font-weight: 600;
-color: var(–text2);
-text-transform: uppercase;
-letter-spacing: 0.06em;
-white-space: nowrap;
-}
-
 .date-input {
-flex: 1;
-background: var(–surface2);
+width: 100%;
+background: var(–bg);
 border: 1.5px solid var(–border);
-border-radius: 10px;
-padding: 8px 12px;
+border-radius: var(–radius-sm);
+padding: 10px 12px;
 color: var(–text);
-font-family: ‘DM Sans’, sans-serif;
-font-size: 0.88rem;
+font-family: ‘Syne’, sans-serif;
+font-size: 0.9rem;
+font-weight: 600;
 outline: none;
+transition: border-color .2s;
 }
 
 .date-input:focus { border-color: var(–accent); }
 
-/* ── REPORT CARDS ── */
-.reports-wrap { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-
 .report-card {
+margin: 12px 16px 0;
 background: var(–surface);
 border: 1px solid var(–border);
 border-radius: var(–radius);
 overflow: hidden;
 }
 
-.report-header {
+.report-card-header {
 display: flex;
 align-items: center;
 justify-content: space-between;
-padding: 12px 14px;
+padding: 12px 16px;
 border-bottom: 1px solid var(–border);
+background: var(–bg2);
 }
 
-.report-title { font-size: 0.85rem; font-weight: 600; }
+.report-card-title { font-size: 0.88rem; font-weight: 700; }
 
 .report-badge {
-font-size: 0.62rem;
-font-weight: 600;
-letter-spacing: 0.06em;
+font-size: 0.6rem;
+font-weight: 700;
+letter-spacing: 0.1em;
 text-transform: uppercase;
-padding: 3px 8px;
-border-radius: 8px;
-background: var(–surface2);
+padding: 4px 9px;
+border-radius: 20px;
+background: var(–bg);
 color: var(–text3);
+border: 1px solid var(–border);
 }
 
-.report-badge.ready { background: var(–green-lt); color: var(–green); }
+.report-badge.ready { background: var(–green-lt); color: var(–green); border-color: var(–green-bd); }
 
-.photo-slots {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 10px;
-padding: 12px;
-}
+.photo-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; }
 
 .slot {
-border: 1.5px dashed var(–border);
-border-radius: 10px;
-padding: 12px 8px;
+border: 2px dashed var(–border2);
+border-radius: var(–radius-sm);
+padding: 14px 8px;
 text-align: center;
 cursor: pointer;
 transition: all .2s;
 position: relative;
 overflow: hidden;
-min-height: 90px;
+min-height: 95px;
 display: flex;
 flex-direction: column;
 align-items: center;
 justify-content: center;
+background: var(–bg);
 }
 
-.slot:active { transform: scale(0.97); }
+.slot:active { transform: scale(0.96); }
 .slot.uploaded { border-color: var(–green); border-style: solid; background: var(–green-lt); }
 
-.slot-thumb {
-width: 100%;
-height: 65px;
-object-fit: cover;
-border-radius: 6px;
-margin-bottom: 5px;
-display: none;
-}
-
+.slot-thumb { width: 100%; height: 65px; object-fit: cover; border-radius: 6px; margin-bottom: 5px; display: none; }
 .slot.uploaded .slot-thumb { display: block; }
 .slot.uploaded .slot-icon { display: none; }
 
-.slot-icon { font-size: 1.2rem; margin-bottom: 4px; }
-.slot-label { font-size: 0.68rem; font-weight: 600; color: var(–text2); line-height: 1.3; }
+.slot-icon { font-size: 1.3rem; margin-bottom: 5px; }
+.slot-label { font-size: 0.68rem; font-weight: 700; color: var(–text2); }
 .slot.uploaded .slot-label { color: var(–green); }
-.slot-status { font-size: 0.6rem; color: var(–text3); margin-top: 2px; }
-.slot.uploaded .slot-status { color: var(–green); opacity: 0.7; }
+.slot-status { font-size: 0.58rem; color: var(–text3); margin-top: 3px; font-weight: 500; }
+.slot.uploaded .slot-status { color: var(–green); opacity: 0.8; }
 .slot input[type=file] { display: none; }
 
 .remove-btn {
-position: absolute;
-top: 4px; right: 4px;
-width: 18px; height: 18px;
+position: absolute; top: 5px; right: 5px;
+width: 20px; height: 20px;
 border-radius: 50%;
-background: var(–red);
-color: white;
-border: none;
-font-size: 0.65rem;
-cursor: pointer;
-display: none;
-align-items: center;
-justify-content: center;
+background: var(–red); color: white; border: none;
+font-size: 0.6rem; cursor: pointer;
+display: none; align-items: center; justify-content: center; font-weight: 700;
 }
 
 .slot.uploaded .remove-btn { display: flex; }
 
-/* ── BUTTONS ── */
-.btn-wrap {
-padding: 0 16px 16px;
-display: flex;
-flex-direction: column;
-gap: 8px;
-}
+.btn-wrap { padding: 16px; }
 
 .generate-btn {
-width: 100%;
-padding: 15px;
-background: var(–accent);
-color: white;
-border: none;
+width: 100%; padding: 16px;
+background: var(–accent); color: white; border: none;
 border-radius: var(–radius);
-font-family: ‘DM Sans’, sans-serif;
-font-size: 0.95rem;
-font-weight: 600;
-cursor: pointer;
-transition: all .2s;
-display: flex;
-align-items: center;
-justify-content: center;
-gap: 8px;
+font-family: ‘Syne’, sans-serif;
+font-size: 0.95rem; font-weight: 700;
+cursor: pointer; transition: all .2s;
+display: flex; align-items: center; justify-content: center; gap: 8px;
+letter-spacing: 0.02em;
+box-shadow: 0 4px 20px rgba(232,93,38,0.3);
 }
 
-.generate-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.generate-btn:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
 .generate-btn:not(:disabled):active { transform: scale(0.98); }
 
-/* ── LOADING ── */
-.loading { display: none; padding: 30px 20px; text-align: center; }
+.loading { display: none; padding: 36px 24px; text-align: center; }
 .loading.show { display: block; }
 
 .spinner {
-width: 36px; height: 36px;
+width: 40px; height: 40px;
 border: 3px solid var(–border);
 border-top-color: var(–accent);
 border-radius: 50%;
-animation: spin 0.8s linear infinite;
-margin: 0 auto 12px;
+animation: spin 0.7s linear infinite;
+margin: 0 auto 16px;
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.loading-text { font-size: 0.85rem; color: var(–text2); }
-.loading-step { font-size: 0.75rem; color: var(–text3); margin-top: 6px; font-style: italic; }
+.loading-text { font-size: 0.88rem; font-weight: 700; color: var(–text); margin-bottom: 4px; }
+.loading-step { font-size: 0.74rem; color: var(–text3); font-style: italic; }
 
-.progress-bar-wrap {
-height: 4px;
-background: var(–border);
-border-radius: 2px;
-margin: 12px 20px 0;
-overflow: hidden;
+.progress-wrap {
+height: 3px; background: var(–border);
+border-radius: 2px; margin: 14px 16px 0;
+overflow: hidden; display: none;
 }
 
-.progress-bar-fill {
-height: 100%;
-background: var(–accent);
-border-radius: 2px;
-transition: width .4s ease;
-width: 0%;
+.progress-fill {
+height: 100%; background: var(–accent);
+border-radius: 2px; transition: width .4s ease; width: 0%;
 }
 
-/* ── RESULT ── */
-.result-section { display: none; padding: 16px; }
-.result-section.show { display: block; animation: fadeUp .3s ease; }
-
-@keyframes fadeUp {
-from { opacity: 0; transform: translateY(10px); }
-to   { opacity: 1; transform: translateY(0); }
-}
-
-.result-header {
-display: flex;
-align-items: center;
-justify-content: space-between;
-margin-bottom: 12px;
-}
-
-.result-title {
-font-size: 0.8rem;
-font-weight: 600;
-color: var(–green);
-text-transform: uppercase;
-letter-spacing: 0.08em;
-}
-
-.copy-btn {
-padding: 8px 16px;
-background: var(–green-lt);
-color: var(–green);
-border: 1px solid rgba(52,199,123,.3);
-border-radius: 10px;
-font-family: ‘DM Sans’, sans-serif;
-font-size: 0.78rem;
-font-weight: 600;
-cursor: pointer;
-transition: all .2s;
-}
-
-.copy-btn:active { transform: scale(0.96); }
-.copy-btn.copied { background: var(–green); color: white; }
-
-.message-box {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: var(–radius);
-padding: 16px;
-font-family: ‘DM Mono’, monospace;
-font-size: 0.78rem;
-line-height: 1.7;
-color: var(–text);
-white-space: pre-wrap;
-word-break: break-word;
-max-height: 500px;
-overflow-y: auto;
-}
-
-.message-box::-webkit-scrollbar { width: 4px; }
-.message-box::-webkit-scrollbar-thumb { background: var(–border); border-radius: 2px; }
-
-.action-row {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 8px;
-margin-top: 10px;
-}
-
-.action-btn {
-padding: 12px;
-background: transparent;
-color: var(–text2);
-border: 1px solid var(–border);
-border-radius: var(–radius);
-font-family: ‘DM Sans’, sans-serif;
-font-size: 0.82rem;
-font-weight: 500;
-cursor: pointer;
-transition: all .2s;
-text-align: center;
-}
-
-.action-btn:active { background: var(–surface2); }
-
-/* ── ERROR ── */
 .error-box {
-display: none;
-margin: 0 16px 16px;
+display: none; margin: 0 16px 12px;
 padding: 14px 16px;
-background: var(–red-lt);
-border: 1px solid rgba(247,95,95,.3);
+background: var(–red-lt); border: 1px solid var(–red-bd);
 border-radius: var(–radius);
-font-size: 0.82rem;
-color: var(–red);
-line-height: 1.5;
+font-size: 0.82rem; color: var(–red); line-height: 1.5; font-weight: 500;
 }
 
 .error-box.show { display: block; }
 
-/* ── TIPS ── */
-.tips {
-margin: 0 16px 16px;
-padding: 14px 16px;
-background: var(–surface);
+.result-section { display: none; padding: 0 16px 16px; }
+.result-section.show { display: block; animation: fadeUp .3s ease; }
+
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(12px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+
+.result-title {
+font-size: 0.72rem; font-weight: 700;
+color: var(–green); text-transform: uppercase; letter-spacing: 0.12em;
+}
+
+.copy-btn {
+padding: 9px 18px;
+background: var(–green); color: white; border: none;
+border-radius: var(–radius-sm);
+font-family: ‘Syne’, sans-serif;
+font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all .2s;
+}
+
+.copy-btn:active { transform: scale(0.96); }
+.copy-btn.copied { background: var(–text); }
+
+.message-box {
+background: var(–text);
+border-radius: var(–radius);
+padding: 18px;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 0.76rem; line-height: 1.75;
+color: #e8e4dc; white-space: pre-wrap; word-break: break-word;
+max-height: 520px; overflow-y: auto;
+}
+
+.message-box::-webkit-scrollbar { width: 4px; }
+.message-box::-webkit-scrollbar-thumb { background: #3a3830; border-radius: 2px; }
+
+.action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+
+.action-btn {
+padding: 12px;
+background: var(–surface); color: var(–text2);
 border: 1px solid var(–border);
+border-radius: var(–radius-sm);
+font-family: ‘Syne’, sans-serif;
+font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all .2s; text-align: center;
+}
+
+.action-btn:active { background: var(–bg2); }
+
+.tips {
+margin: 12px 16px 0;
+padding: 14px 16px;
+background: var(–orange-lt); border: 1px solid var(–orange-bd);
 border-radius: var(–radius);
 }
 
 .tips-title {
-font-size: 0.72rem;
-font-weight: 600;
-color: var(–orange);
-text-transform: uppercase;
-letter-spacing: 0.08em;
-margin-bottom: 8px;
+font-size: 0.68rem; font-weight: 700; color: var(–accent);
+text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;
 }
 
 .tip {
-font-size: 0.78rem;
-color: var(–text2);
-padding: 4px 0 4px 14px;
-position: relative;
-line-height: 1.4;
+font-size: 0.76rem; color: var(–text2);
+padding: 3px 0 3px 16px; position: relative; line-height: 1.45; font-weight: 500;
 }
 
-.tip::before { content: ‘·’; position: absolute; left: 4px; color: var(–text3); }
+.tip::before { content: ‘→’; position: absolute; left: 0; color: var(–accent); font-size: 0.65rem; }
 </style>
 
 </head>
 <body>
 
-<!-- HEADER -->
-
 <div class="header">
-  <div class="header-top">
-    <div class="app-title">Report<span>→</span>WA</div>
-    <div class="status-badge">Claude AI</div>
-  </div>
+  <div class="header-tag">F&B Daily Report Tool</div>
+  <div class="app-title">Report<span>→</span>WA</div>
   <div class="header-sub">Oracle Micros → WhatsApp in seconds</div>
   <div class="by-samam">
-    <span class="by-samam-dot"></span>
+    <div class="by-samam-line"></div>
     <span class="by-samam-text">by Samam</span>
-    <span class="by-samam-dot"></span>
   </div>
 </div>
 
-<!-- API KEY -->
-
-<div class="api-section">
-  <div class="api-row">
-    <input class="api-input" type="password" id="api-key" placeholder="Enter your Claude API key (sk-ant-...)" />
-    <button class="api-test-btn" onclick="testAPI()">🧪 Test</button>
+<div class="section">
+  <div class="section-header">
+    <span class="section-label">Gemini API Key</span>
+    <span class="gemini-badge"><span class="gemini-dot"></span>Gemini Flash</span>
   </div>
-  <div class="api-status" id="api-status"></div>
+  <div class="section-body">
+    <div class="api-row">
+      <input class="api-input" type="password" id="api-key" placeholder="Paste your Gemini API key..." />
+      <button class="test-btn" onclick="testAPI()">🧪 Test</button>
+    </div>
+    <div class="api-status" id="api-status"></div>
+  </div>
 </div>
 
-<!-- DATE -->
-
-<div class="date-row">
-  <div class="date-label">Date</div>
-  <input class="date-input" type="text" id="report-date" placeholder="e.g. 23/04/2026" />
+<div class="section">
+  <div class="section-header">
+    <span class="section-label">Report Date</span>
+  </div>
+  <div class="section-body">
+    <input class="date-input" type="text" id="report-date" placeholder="DD/MM/YYYY" />
+  </div>
 </div>
 
-<!-- REPORT SECTIONS -->
-
-<div class="reports-wrap">
-
-  <!-- LUNCH -->
-
-  <div class="report-card">
-    <div class="report-header">
-      <div class="report-title">☀️ Eau Bar — Lunch</div>
-      <div class="report-badge" id="badge-lunch">No photos</div>
+<div class="report-card">
+  <div class="report-card-header">
+    <div class="report-card-title">☀️ Eau Bar — Lunch</div>
+    <div class="report-badge" id="badge-lunch">No photos</div>
+  </div>
+  <div class="photo-slots">
+    <div class="slot" id="slot-lunch-1" onclick="triggerUpload('lunch',1)">
+      <input type="file" id="file-lunch-1" accept="image/*" onchange="handleUpload('lunch',1,this)">
+      <img class="slot-thumb" id="thumb-lunch-1" />
+      <button class="remove-btn" onclick="removePhoto(event,'lunch',1)">✕</button>
+      <div class="slot-icon">📷</div>
+      <div class="slot-label">Top Half</div>
+      <div class="slot-status">Tap to upload</div>
     </div>
-    <div class="photo-slots">
-      <div class="slot" id="slot-lunch-1" onclick="triggerUpload('lunch',1)">
-        <input type="file" id="file-lunch-1" accept="image/*" onchange="handleUpload('lunch',1,this)">
-        <img class="slot-thumb" id="thumb-lunch-1" />
-        <button class="remove-btn" onclick="removePhoto(event,'lunch',1)">✕</button>
-        <div class="slot-icon">📷</div>
-        <div class="slot-label">Top Half</div>
-        <div class="slot-status">Tap to upload</div>
-      </div>
-      <div class="slot" id="slot-lunch-2" onclick="triggerUpload('lunch',2)">
-        <input type="file" id="file-lunch-2" accept="image/*" onchange="handleUpload('lunch',2,this)">
-        <img class="slot-thumb" id="thumb-lunch-2" />
-        <button class="remove-btn" onclick="removePhoto(event,'lunch',2)">✕</button>
-        <div class="slot-icon">📷</div>
-        <div class="slot-label">Bottom Half</div>
-        <div class="slot-status">Tap to upload</div>
-      </div>
+    <div class="slot" id="slot-lunch-2" onclick="triggerUpload('lunch',2)">
+      <input type="file" id="file-lunch-2" accept="image/*" onchange="handleUpload('lunch',2,this)">
+      <img class="slot-thumb" id="thumb-lunch-2" />
+      <button class="remove-btn" onclick="removePhoto(event,'lunch',2)">✕</button>
+      <div class="slot-icon">📷</div>
+      <div class="slot-label">Bottom Half</div>
+      <div class="slot-status">Tap to upload</div>
     </div>
   </div>
-
-  <!-- DINNER -->
-
-  <div class="report-card">
-    <div class="report-header">
-      <div class="report-title">🌙 Eau Bar — Dinner</div>
-      <div class="report-badge" id="badge-dinner">No photos</div>
-    </div>
-    <div class="photo-slots">
-      <div class="slot" id="slot-dinner-1" onclick="triggerUpload('dinner',1)">
-        <input type="file" id="file-dinner-1" accept="image/*" onchange="handleUpload('dinner',1,this)">
-        <img class="slot-thumb" id="thumb-dinner-1" />
-        <button class="remove-btn" onclick="removePhoto(event,'dinner',1)">✕</button>
-        <div class="slot-icon">📷</div>
-        <div class="slot-label">Top Half</div>
-        <div class="slot-status">Tap to upload</div>
-      </div>
-      <div class="slot" id="slot-dinner-2" onclick="triggerUpload('dinner',2)">
-        <input type="file" id="file-dinner-2" accept="image/*" onchange="handleUpload('dinner',2,this)">
-        <img class="slot-thumb" id="thumb-dinner-2" />
-        <button class="remove-btn" onclick="removePhoto(event,'dinner',2)">✕</button>
-        <div class="slot-icon">📷</div>
-        <div class="slot-label">Bottom Half</div>
-        <div class="slot-status">Tap to upload</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- IWAU -->
-
-  <div class="report-card">
-    <div class="report-header">
-      <div class="report-title">🍽️ Iwau Chef Table</div>
-      <div class="report-badge" id="badge-iwau">No photos</div>
-    </div>
-    <div class="photo-slots">
-      <div class="slot" id="slot-iwau-1" onclick="triggerUpload('iwau',1)">
-        <input type="file" id="file-iwau-1" accept="image/*" onchange="handleUpload('iwau',1,this)">
-        <img class="slot-thumb" id="thumb-iwau-1" />
-        <button class="remove-btn" onclick="removePhoto(event,'iwau',1)">✕</button>
-        <div class="slot-icon">📷</div>
-        <div class="slot-label">Top Half</div>
-        <div class="slot-status">Tap to upload</div>
-      </div>
-      <div class="slot" id="slot-iwau-2" onclick="triggerUpload('iwau',2)">
-        <input type="file" id="file-iwau-2" accept="image/*" onchange="handleUpload('iwau',2,this)">
-        <img class="slot-thumb" id="thumb-iwau-2" />
-        <button class="remove-btn" onclick="removePhoto(event,'iwau',2)">✕</button>
-        <div class="slot-icon">📷</div>
-        <div class="slot-label">Bottom Half</div>
-        <div class="slot-status">Tap to upload</div>
-      </div>
-    </div>
-  </div>
-
 </div>
 
-<!-- GENERATE -->
+<div class="report-card">
+  <div class="report-card-header">
+    <div class="report-card-title">🌙 Eau Bar — Dinner</div>
+    <div class="report-badge" id="badge-dinner">No photos</div>
+  </div>
+  <div class="photo-slots">
+    <div class="slot" id="slot-dinner-1" onclick="triggerUpload('dinner',1)">
+      <input type="file" id="file-dinner-1" accept="image/*" onchange="handleUpload('dinner',1,this)">
+      <img class="slot-thumb" id="thumb-dinner-1" />
+      <button class="remove-btn" onclick="removePhoto(event,'dinner',1)">✕</button>
+      <div class="slot-icon">📷</div>
+      <div class="slot-label">Top Half</div>
+      <div class="slot-status">Tap to upload</div>
+    </div>
+    <div class="slot" id="slot-dinner-2" onclick="triggerUpload('dinner',2)">
+      <input type="file" id="file-dinner-2" accept="image/*" onchange="handleUpload('dinner',2,this)">
+      <img class="slot-thumb" id="thumb-dinner-2" />
+      <button class="remove-btn" onclick="removePhoto(event,'dinner',2)">✕</button>
+      <div class="slot-icon">📷</div>
+      <div class="slot-label">Bottom Half</div>
+      <div class="slot-status">Tap to upload</div>
+    </div>
+  </div>
+</div>
+
+<div class="report-card">
+  <div class="report-card-header">
+    <div class="report-card-title">🍽️ Iwau Chef Table</div>
+    <div class="report-badge" id="badge-iwau">No photos</div>
+  </div>
+  <div class="photo-slots">
+    <div class="slot" id="slot-iwau-1" onclick="triggerUpload('iwau',1)">
+      <input type="file" id="file-iwau-1" accept="image/*" onchange="handleUpload('iwau',1,this)">
+      <img class="slot-thumb" id="thumb-iwau-1" />
+      <button class="remove-btn" onclick="removePhoto(event,'iwau',1)">✕</button>
+      <div class="slot-icon">📷</div>
+      <div class="slot-label">Top Half</div>
+      <div class="slot-status">Tap to upload</div>
+    </div>
+    <div class="slot" id="slot-iwau-2" onclick="triggerUpload('iwau',2)">
+      <input type="file" id="file-iwau-2" accept="image/*" onchange="handleUpload('iwau',2,this)">
+      <img class="slot-thumb" id="thumb-iwau-2" />
+      <button class="remove-btn" onclick="removePhoto(event,'iwau',2)">✕</button>
+      <div class="slot-icon">📷</div>
+      <div class="slot-label">Bottom Half</div>
+      <div class="slot-status">Tap to upload</div>
+    </div>
+  </div>
+</div>
 
 <div class="btn-wrap">
   <button class="generate-btn" id="generate-btn" onclick="generateReport()" disabled>
-    🔍 Generate WhatsApp Message
+    ✦ Generate WhatsApp Message
   </button>
 </div>
 
-<!-- LOADING -->
-
 <div class="loading" id="loading">
   <div class="spinner"></div>
-  <div class="loading-text" id="loading-text">Reading your reports…</div>
+  <div class="loading-text">Reading your reports…</div>
   <div class="loading-step" id="loading-step">Please wait…</div>
 </div>
-<div class="progress-bar-wrap" id="progress-wrap" style="display:none;">
-  <div class="progress-bar-fill" id="progress-fill"></div>
+<div class="progress-wrap" id="progress-wrap">
+  <div class="progress-fill" id="progress-fill"></div>
 </div>
 
-<!-- ERROR -->
-
 <div class="error-box" id="error-box"></div>
-
-<!-- RESULT -->
 
 <div class="result-section" id="result-section">
   <div class="result-header">
@@ -644,10 +568,8 @@ line-height: 1.4;
     <button class="action-btn" onclick="resetAll()">↺ Start Over</button>
     <button class="action-btn" onclick="toggleDebug()" id="debug-btn">🔍 Debug</button>
   </div>
-  <div id="debug-box" style="display:none;margin-top:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;font-family:DM Mono,monospace;font-size:0.65rem;color:var(--text2);white-space:pre-wrap;max-height:200px;overflow-y:auto;line-height:1.5;"></div>
+  <div id="debug-box" style="display:none;margin-top:10px;background:var(--text);border-radius:var(--radius-sm);padding:12px;font-family:JetBrains Mono,monospace;font-size:0.62rem;color:#a09880;white-space:pre-wrap;max-height:200px;overflow-y:auto;line-height:1.5;"></div>
 </div>
-
-<!-- TIPS -->
 
 <div class="tips" id="tips-box">
   <div class="tips-title">📸 Photo Tips</div>
@@ -659,9 +581,7 @@ line-height: 1.4;
 </div>
 
 <script>
-  // ── CONFIG ──
-  const DEFAULT_API_KEY = '';
-  const CLAUDE_URL = 'https://api.anthropic.com/v1/messages';
+  const GEMINI_MODEL = 'gemini-2.0-flash';
 
   const SYSTEM_PROMPT = `You are an expert at reading Oracle Micros "Serving Period Financial Report" receipt images.
 
@@ -687,27 +607,29 @@ Important rules:
 
 Example: {"checks":10,"covers":7,"avg_check":121,"ent_spent":305,"oc_spent":48,"patina_spent":72,"food_rev":1034,"bev_rev":143,"tobacco_rev":159,"net_sales":824}`;
 
-  // ── STATE ──
   const photos = { lunch: {}, dinner: {}, iwau: {} };
   let debugText = '';
 
-  // ── INIT ──
   const today = new Date();
   const dd = String(today.getDate()).padStart(2,'0');
   const mm = String(today.getMonth()+1).padStart(2,'0');
   const yyyy = today.getFullYear();
   document.getElementById('report-date').value = `${dd}/${mm}/${yyyy}`;
 
-  const savedKey = localStorage.getItem('claude_api_key');
+  const savedKey = localStorage.getItem('gemini_api_key');
   if (savedKey) document.getElementById('api-key').value = savedKey;
-  if (DEFAULT_API_KEY) document.getElementById('api-key').value = DEFAULT_API_KEY;
 
   document.getElementById('api-key').addEventListener('change', () => {
     const key = document.getElementById('api-key').value.trim();
-    if (key) localStorage.setItem('claude_api_key', key);
+    if (key) localStorage.setItem('gemini_api_key', key);
   });
 
-  // ── API KEY TEST ──
+  function getAPIKey() { return document.getElementById('api-key').value.trim(); }
+
+  function geminiURL(key) {
+    return `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`;
+  }
+
   async function testAPI() {
     const key = getAPIKey();
     const statusEl = document.getElementById('api-status');
@@ -723,18 +645,12 @@ Example: {"checks":10,"covers":7,"avg_check":121,"ent_spent":305,"oc_spent":48,"
     statusEl.className = 'api-status checking';
 
     try {
-      const res = await fetch(CLAUDE_URL, {
+      const res = await fetch(geminiURL(key), {
         method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-          'x-api-key': key
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 20,
-          messages: [{ role: 'user', content: 'Say "OK" only.' }]
+          contents: [{ parts: [{ text: 'Say OK only.' }] }],
+          generationConfig: { maxOutputTokens: 10 }
         })
       });
 
@@ -745,10 +661,10 @@ Example: {"checks":10,"covers":7,"avg_check":121,"ent_spent":305,"oc_spent":48,"
         statusEl.className = 'api-status err';
         inputEl.className = 'api-input invalid';
       } else {
-        statusEl.textContent = '✅ API key is valid and working!';
+        statusEl.textContent = '✅ Gemini API key is valid and working!';
         statusEl.className = 'api-status ok';
         inputEl.className = 'api-input valid';
-        localStorage.setItem('claude_api_key', key);
+        localStorage.setItem('gemini_api_key', key);
       }
     } catch(e) {
       statusEl.textContent = '❌ Connection error: ' + e.message;
@@ -756,11 +672,6 @@ Example: {"checks":10,"covers":7,"avg_check":121,"ent_spent":305,"oc_spent":48,"
     }
   }
 
-  function getAPIKey() {
-    return document.getElementById('api-key').value.trim() || DEFAULT_API_KEY;
-  }
-
-  // ── UPLOAD ──
   function triggerUpload(s, n) { document.getElementById(`file-${s}-${n}`).click(); }
 
   function handleUpload(s, n, input) {
@@ -821,42 +732,30 @@ Example: {"checks":10,"covers":7,"avg_check":121,"ent_spent":305,"oc_spent":48,"
   function getBase64(dataUrl) { return dataUrl.split(',')[1]; }
   function setProgress(p) { document.getElementById('progress-fill').style.width = p + '%'; }
 
-  // ── CLAUDE API CALL ──
   async function extractFromImages(imageList, reportName) {
     const key = getAPIKey();
-    if (!key) throw new Error('No API key entered. Please enter your Claude API key above.');
+    if (!key) throw new Error('No API key entered. Please enter your Gemini API key above.');
 
-    const content = [];
+    const parts = [];
+    parts.push({ text: SYSTEM_PROMPT });
 
     for (const img of imageList) {
-      content.push({
-        type: 'image',
-        source: {
-          type: 'base64',
-          media_type: img.mimeType,
+      parts.push({
+        inline_data: {
+          mime_type: img.mimeType,
           data: getBase64(img.dataUrl)
         }
       });
     }
 
-    content.push({
-      type: 'text',
-      text: `Extract the sales figures from this Oracle Micros ${reportName} report. Return only JSON.`
-    });
+    parts.push({ text: `Extract the sales figures from this Oracle Micros ${reportName} report. Return only JSON.` });
 
-    const res = await fetch(CLAUDE_URL, {
+    const res = await fetch(geminiURL(key), {
       method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-        'x-api-key': key
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 500,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: 'user', content }]
+        contents: [{ parts }],
+        generationConfig: { maxOutputTokens: 500, temperature: 0 }
       })
     });
 
@@ -864,8 +763,8 @@ Example: {"checks":10,"covers":7,"avg_check":121,"ent_spent":305,"oc_spent":48,"
 
     if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
 
-    const raw = data.content?.[0]?.text?.trim();
-    if (!raw) throw new Error('Empty response from Claude');
+    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    if (!raw) throw new Error('Empty response from Gemini');
 
     debugText += `\n--- ${reportName} ---\n${raw}\n`;
 
@@ -876,7 +775,6 @@ Example: {"checks":10,"covers":7,"avg_check":121,"ent_spent":305,"oc_spent":48,"
     return JSON.parse(match[0]);
   }
 
-  // ── BUILD MESSAGE ──
   const fmt = v => String(Math.floor(Number(v) || 0));
 
   function buildSection(title, d, entLabel) {
@@ -897,11 +795,10 @@ Tobacco Rev: ${fmt(d.tobacco_rev)}
 Net Sales: ${fmt(d.net_sales)}`;
   }
 
-  // ── GENERATE ──
   async function generateReport() {
     const key = getAPIKey();
     if (!key) {
-      showError('⚠️ Please enter your Claude API key first, then tap 🧪 Test to verify it.');
+      showError('⚠️ Please enter your Gemini API key first, then tap 🧪 Test to verify it.');
       return;
     }
 
@@ -962,7 +859,6 @@ Net Sales: ${fmt(d.net_sales)}`;
     box.classList.add('show');
   }
 
-  // ── COPY ──
   function copyMessage() {
     navigator.clipboard.writeText(document.getElementById('message-box').textContent).then(() => {
       const btn = document.getElementById('copy-btn');
@@ -972,7 +868,6 @@ Net Sales: ${fmt(d.net_sales)}`;
     });
   }
 
-  // ── DEBUG ──
   function toggleDebug() {
     const box = document.getElementById('debug-box');
     const btn = document.getElementById('debug-btn');
@@ -986,7 +881,6 @@ Net Sales: ${fmt(d.net_sales)}`;
     }
   }
 
-  // ── RESET ──
   function resetAll() {
     ['lunch','dinner','iwau'].forEach(s => {
       photos[s] = {};
